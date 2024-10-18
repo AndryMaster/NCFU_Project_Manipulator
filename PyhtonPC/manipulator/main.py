@@ -1,24 +1,22 @@
 import time
-from argparse import ArgumentTypeError
 
 import serial
-import struct
 
 from config import *
 from msg import MsgOne, MsgAll
 
 
-def get_struct_pack(fresh_msg):
-    if hasattr(fresh_msg, "get"):  # callable(getattr(args[0], "get")):
-        return struct.pack('b' * len(fresh_msg.get()), *fresh_msg.get())
-    elif isinstance(fresh_msg, str):
-        return fresh_msg.encode('ascii')
-    raise ArgumentTypeError(fresh_msg)
+def pack_msg(_msg):
+    try:
+        return str(_msg).encode('ascii')
+    except Exception as e:
+        raise TypeError(f"Incorrect type of {_msg} {type(_msg)}\n{e}")
 
 
 def send_msg(ser: serial.Serial, msg):
-    ser.write(get_struct_pack(msg))
-    wait_msg(ser)
+    ser.write(pack_msg(msg))
+    print(f"Sending message: {pack_msg(msg)}")
+    # wait_msg(ser)
 
 
 def wait_msg(ser: serial.Serial, limit=2000):
@@ -26,16 +24,21 @@ def wait_msg(ser: serial.Serial, limit=2000):
     print(line)
 
 
-port = serial.Serial(PORT, SERIAL_SPEED)
+def test1():
+    time.sleep(5)
+    send_msg(port, 'hello!')
+
+    time.sleep(3)
+    send_msg(port, MsgOne(0, 160))
+
+    time.sleep(3)
+    send_msg(port, MsgAll([60, 100, 80, 80]))
 
 
-send_msg(port, 'hello!')
+def main():
+    text_to_print = 'привет мир'
 
-time.sleep(3)
 
-send_msg(port, MsgOne(0, 160))
-
-# print("waiting for arduino...")
-# line = b""
-# while not b"READY" in line:
-#     line = port.readline().decode('ascii')
+if __name__ == '__main__':
+    port = serial.Serial(PORT, SERIAL_SPEED)
+    test1()

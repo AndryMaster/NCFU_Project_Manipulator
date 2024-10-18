@@ -26,7 +26,7 @@ void servoSetup() {
 
   for (byte i = 0; i < NUM_SERVO; i++) {
     servos[i].smoothStart();
-    servos[i].setAutoDetach(false);
+    servos[i].setAutoDetach(false);  // false = шумно + точно; true = тихо + падает
   }
 }
 

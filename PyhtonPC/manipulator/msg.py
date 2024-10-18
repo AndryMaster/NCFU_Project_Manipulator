@@ -1,4 +1,3 @@
-import dataclasses
 from dataclasses import dataclass, field
 
 from typing import Iterable, Iterator, List, Tuple, Union
@@ -6,39 +5,66 @@ from typing import Iterable, Iterator, List, Tuple, Union
 from config import *
 
 
+class MsgTypes:
+    MSG_ONE = 'O'
+    MSG_ALL = 'A'
+    MSG_KEY_PRESS = 'K'
+    MSG_TEXT = 'T'
+
+
 @dataclass
 class MsgOne:
-    msg_type: int = field(default=ord('O'), init=False)
-    n_servo: int = field()
-    servo_pos: int = field()
+    # msg_type: int = field(default=ord('O'), init=False)
+    n_servo: int
+    servo_pos: int
 
-    def get(self):
+    def __str__(self):
         assert 0 <= self.n_servo < NUM_SERVOS
         assert 0 <= self.servo_pos < 180
-        return [getattr(self, field.name) for field in dataclasses.fields(self)]
+        return f"{MsgTypes.MSG_ONE} {self.n_servo} {self.servo_pos}"
 
 
 @dataclass
 class MsgAll:
-    msg_type: int = field(default=ord('A'), init=False)
-    servo_pos: Iterable[int] = field(default_factory=list)
+    # msg_type: int = field(default=ord('A'), init=False)
+    many_servo_pos: List[int]
 
-    def get(self):
-        assert len(self.servo_pos) == NUM_SERVOS
-        assert all((0 <= pos < 180 for pos in self.servo_pos))
-        return [self.msg_type, *self.servo_pos]
+    def __str__(self):
+        assert len(self.many_servo_pos) == NUM_SERVOS
+        assert all((0 <= pos < 180 for pos in self.many_servo_pos))
+        return f"{MsgTypes.MSG_ALL} {' '.join(map(str, self.many_servo_pos))}"
+
+
+@dataclass
+class MsgKeyPress:
+    key_button: str
+    many_servo_pos: List[int]
+
+    def __str__(self):
+        assert len(self.key_button) == 1
+        assert len(self.many_servo_pos) == NUM_SERVOS
+        assert all((0 <= pos < 180 for pos in self.many_servo_pos))
+        return f"{MsgTypes.MSG_KEY_PRESS} {' '.join(map(str, self.many_servo_pos))} {self.key_button}"
+
+
+@dataclass
+class MsgText:
+    text: str
+
+    def __str__(self):
+        assert len(self.text) < 64
+        return f"{MsgTypes.MSG_TEXT} {self.text}"
 
 
 if __name__ == '__main__':
-    import struct
-
-    # a = MsgOne(3, 4)
     a = MsgOne(2, 160)
-    print(a.get())
+    print(a)
 
-    b = MsgAll([3, 4, 5, 6])
-    print(b.get())
+    b = MsgAll([90, 120, 40, 160])
+    print(b)
 
-    r = struct.pack('b' * len(a.get()), *a.get())
+    c = MsgKeyPress('ы', [90, 120, 40, 160])
+    print(c)
 
-    print(r)
+    d = MsgText('Hello world!')
+    print(d)
