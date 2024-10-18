@@ -14,17 +14,14 @@
 
 // Global variables
 uint32_t servoTimer;
-// uint32_t turnTimer;
-// bool flag;
-
-// servos[0] - servo_key_presser  - верхушка  манипулятора нажатие клавиш "коготь"
-// servos[1] - servo_up_down      - подъём    манипулятора вверх-вниз
-// servos[2] - servo_forward_back - движение  манипулятора вперёд-назад
-// servos[3] - servo_left_right   - основание манипулятора поворот вправо-влево
 
 
 // Servo global variables
 ServoSmooth servos[NUM_SERVO];
+// servos[0] - servo_key_presser  - верхушка  манипулятора нажатие клавиш "коготь"
+// servos[1] - servo_up_down      - подъём    манипулятора вверх-вниз
+// servos[2] - servo_forward_back - движение  манипулятора вперёд-назад
+// servos[3] - servo_left_right   - основание манипулятора поворот вправо-влево
 
 
 // Serial global variables
