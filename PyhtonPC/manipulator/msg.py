@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-
 from typing import Iterable, Iterator, List, Tuple, Union
 
 from config import *
@@ -10,6 +9,7 @@ class MsgTypes:
     MSG_ALL = 'A'
     MSG_KEY_PRESS = 'K'
     MSG_TEXT = 'T'
+    MSG_GET_POS = 'G'
 
 
 @dataclass
@@ -20,7 +20,7 @@ class MsgOne:
 
     def __str__(self):
         assert 0 <= self.n_servo < NUM_SERVOS
-        assert 0 <= self.servo_pos < 180
+        assert 0 <= self.servo_pos <= 180
         return f"{MsgTypes.MSG_ONE} {self.n_servo} {self.servo_pos}"
 
 
@@ -31,7 +31,7 @@ class MsgAll:
 
     def __str__(self):
         assert len(self.many_servo_pos) == NUM_SERVOS
-        assert all((0 <= pos < 180 for pos in self.many_servo_pos))
+        assert all((0 <= pos <= 180 for pos in self.many_servo_pos))
         return f"{MsgTypes.MSG_ALL} {' '.join(map(str, self.many_servo_pos))}"
 
 
@@ -56,6 +56,12 @@ class MsgText:
         return f"{MsgTypes.MSG_TEXT} {self.text}"
 
 
+@dataclass
+class MsgGetPos:
+    def __str__(self):
+        return "G"
+
+
 if __name__ == '__main__':
     a = MsgOne(2, 160)
     print(a)
@@ -68,3 +74,6 @@ if __name__ == '__main__':
 
     d = MsgText('Hello world!')
     print(d)
+
+    e = MsgGetPos()
+    print(e)
