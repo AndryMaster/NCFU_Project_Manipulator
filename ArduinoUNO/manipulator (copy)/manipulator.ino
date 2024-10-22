@@ -1,18 +1,16 @@
 #include <ServoSmooth.h>  // https://github.com/GyverLibs/ServoSmooth
+#include "definitions.h"
 #include "utils.h"
-
-#define SERIAL_SPEED 9600
-#define log Serial.println
-
-#define NUM_SERVO 4
-#define servo_key_presser  servos[0]
-#define servo_up_down      servos[1]
-#define servo_forward_back servos[2]
-#define servo_left_right   servos[3]
+#include "task.h"
 
 
 // Global variables
-uint32_t servoTimer;
+// ...
+
+
+// Task variables
+TimerTask timers[TASK_SIZE];
+
 
 // Servo global variables
 ServoSmooth servos[NUM_SERVO];
@@ -30,6 +28,7 @@ enum MsgType {
   One='O',
   KeyPress='K',
   Text='T',
+  GetPos='G',
 };
 
 
@@ -37,16 +36,23 @@ enum MsgType {
 void setup() {
   serialSetup();  // setup <serial.ino>
   log("Setup main program");
+
 }
 
 void lateSetup() {
   servoSetup();  // setup <servo.ino>
   log("Late(servo) setup");
+
+  // addTimerTask(timers, 0, 160, millis() + 5000);
+  // // addTimerTask(timers, 3, 110, millis() + 8000);
+  // addTimerTask(timers, 0, 20, millis() + 10000);
+  // // addTimerTask(timers, 3, 90, millis() + 15000);
 }
 
 void loop() {
-  if (!testStart()) return;  // Start after print
+  if (!testStart()) return;  // Start after print anything
   servoTickAll();
+  checkTimerTasks(timers, servos, millis());
 
   if (Serial.available() > 0) {
     MsgType cmd = Serial.read();
@@ -66,15 +72,10 @@ void loop() {
       case MsgType::All:
         log("case All");
 
-        p1 = Serial.parseInt();
-        p2 = Serial.parseInt();
-        p3 = Serial.parseInt();
-        p4 = Serial.parseInt();
-        if (checkRange(p1) && checkRange(p2) && checkRange(p3) && checkRange(p4)) {
-          servos[0].setTargetDeg(p1);
-          servos[1].setTargetDeg(p2);
-          servos[2].setTargetDeg(p3);
-          servos[3].setTargetDeg(p4);
+        for (byte i = 0; i < NUM_SERVO; i++) {
+          p1 = Serial.parseInt();
+          if (checkRange(p1))
+            servos[i].setTargetDeg(p1);
         }
 
         break;
@@ -86,6 +87,15 @@ void loop() {
       case MsgType::Text:
         log("case Text");
         break;
+      
+      case MsgType::GetPos:  // Fast responce
+        for (byte i = 0; i < NUM_SERVO; i++) {
+          logch(servos[i].getCurrentDeg());
+          logch(" ");
+        } log(" ");
+
+        log("case GetPos");
+        break;
 
       default:
         log("other message");
@@ -94,4 +104,3 @@ void loop() {
     Serial.readString();
   }
 }
-

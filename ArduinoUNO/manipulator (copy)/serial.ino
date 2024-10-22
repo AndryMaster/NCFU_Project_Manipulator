@@ -1,6 +1,6 @@
 void serialSetup() {
   Serial.begin(SERIAL_SPEED);
-  Serial.setTimeout(100);
+  Serial.setTimeout(250);
 }
 
 bool testStart() {
