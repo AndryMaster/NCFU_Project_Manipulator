@@ -6,6 +6,11 @@
 
 /ArduinoUNO/libraries/
 
+#/PythonPC/manipulator/_*.py
+#_*.py
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

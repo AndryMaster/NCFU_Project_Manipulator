@@ -1,3 +1,4 @@
+import serial
 from dataclasses import dataclass, field
 from typing import Iterable, Iterator, List, Tuple, Union
 
@@ -62,7 +63,7 @@ class MsgGetPos:
         return "G"
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # Test
     a = MsgOne(2, 160)
     print(a)
 
