@@ -1,8 +1,7 @@
-import serial
 from dataclasses import dataclass, field
 from typing import Iterable, Iterator, List, Tuple, Union
 
-from config import *
+from config import NUM_SERVOS
 
 
 class MsgTypes:
@@ -15,7 +14,6 @@ class MsgTypes:
 
 @dataclass
 class MsgOne:
-    # msg_type: int = field(default=ord('O'), init=False)
     n_servo: int
     servo_pos: int
 
@@ -27,7 +25,6 @@ class MsgOne:
 
 @dataclass
 class MsgAll:
-    # msg_type: int = field(default=ord('A'), init=False)
     many_servo_pos: List[int]
 
     def __str__(self):
@@ -36,16 +33,16 @@ class MsgAll:
         return f"{MsgTypes.MSG_ALL} {' '.join(map(str, self.many_servo_pos))}"
 
 
-@dataclass
-class MsgKeyPress:
-    key_button: str
-    many_servo_pos: List[int]
-
-    def __str__(self):
-        assert len(self.key_button) == 1
-        assert len(self.many_servo_pos) == NUM_SERVOS
-        assert all((0 <= pos < 180 for pos in self.many_servo_pos))
-        return f"{MsgTypes.MSG_KEY_PRESS} {' '.join(map(str, self.many_servo_pos))} {self.key_button}"
+# @dataclass
+# class MsgKeyPress:
+#     key_button: str
+#     many_servo_pos: List[int]
+#
+#     def __str__(self):
+#         assert len(self.key_button) == 1
+#         assert len(self.many_servo_pos) == NUM_SERVOS
+#         assert all((0 <= pos <= 180 for pos in self.many_servo_pos))
+#         return f"{MsgTypes.MSG_KEY_PRESS} {' '.join(map(str, self.many_servo_pos))} {self.key_button}"
 
 
 @dataclass
@@ -53,7 +50,7 @@ class MsgText:
     text: str
 
     def __str__(self):
-        assert len(self.text) < 64
+        assert len(self.text) <= 64
         return f"{MsgTypes.MSG_TEXT} {self.text}"
 
 
@@ -70,8 +67,8 @@ if __name__ == '__main__':  # Test
     b = MsgAll([90, 120, 40, 160])
     print(b)
 
-    c = MsgKeyPress('ы', [90, 120, 40, 160])
-    print(c)
+    # c = MsgKeyPress('ы', [90, 120, 40, 160])
+    # print(c)
 
     d = MsgText('Hello world!')
     print(d)

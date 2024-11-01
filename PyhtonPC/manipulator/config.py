@@ -1,5 +1,3 @@
-from utils import *
-
 DEBUG = False
 
 # Arduino
@@ -10,24 +8,22 @@ PORT = 'COM5'
 SERIAL_SPEED = 115200  # 115200 9600
 
 # Control
-IS_CHANGED = False
+SEND_DELAY = 0.07
+LAST_SEND = None
 CUR_POS = [90] * 4
 MULTY_ADD_POS = {
     'shift':   [1]  * NUM_SERVOS,
-    'alt':     [5]  * NUM_SERVOS,
-    'default': [15] * NUM_SERVOS,
+    'ctrl':    [5]  * NUM_SERVOS,
+    'alt':     [20] * NUM_SERVOS,
+    'default': [10] * NUM_SERVOS,
 }
 CONTROL = {
-    0: {'keys': 'w s'.split(),},
-    1: {'keys': 'left right'.split(),},
+    0: {'keys': 's w'.split(),},
+    1: {'keys': 'right left'.split(),},
     2: {'keys': 'up down'.split(),},
     3: {'keys': 'a d'.split(),},
-    # 0: 'w s'.split(),
-    # 1: 'up down'.split(),
-    # 2: 'left right'.split(),
-    # 3: 'a d'.split(),
 }
-ALL_KEYS = set([sub_val for val in CONTROL.values() for sub_val in val['keys']])
+ALL_CONTROL_KEYS = set([sub_val for val in CONTROL.values() for sub_val in val['keys']])
 
 INFO_TEXT = {
     "main": """Select control`s mode:
@@ -45,5 +41,5 @@ Modifiers (speed in degrees): <shift>=1 <alt>=5 default=10
 <Enter> to get my position\n""",
 
     "mode_print_text": """ModeINFO:
-qwerty""",
+qwerty\n""",
 }
