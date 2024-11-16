@@ -1,3 +1,5 @@
+from key_board import RUS_KEYS, ENG_KEYS
+
 DEBUG = False
 
 # Arduino
@@ -5,7 +7,7 @@ NUM_SERVOS = 4
 
 # Serial
 PORT = 'COM5'
-SERIAL_SPEED = 115200  # 115200 9600
+SERIAL_SPEED = 9600  # 115200 9600
 
 # Control
 SEND_DELAY = 0.07
@@ -35,11 +37,15 @@ INFO_TEXT = {
 Using message format like: "A 120 90 50 80", "O 0 120" and other.
 Read <MessageType.md> file for more info\n""",
 
-    "mode_control": """ModeINFO:
+    "mode_control": f"""ModeINFO:
 Using (w, a, s, d, up, down, left, right) keys to moving.
-Modifiers (speed in degrees): <shift>=1 <alt>=5 default=10
+Modifiers (speed in degrees): {' '.join([f'<{key}>={MULTY_ADD_POS[key][0]}' for key in MULTY_ADD_POS.keys()])}
 <Enter> to get my position\n""",
 
-    "mode_print_text": """ModeINFO:
-qwerty\n""",
+    "mode_print_text": f"""ModeINFO:
+Print your text in selected language (in lower case). It will be auto printed.
+RUS keys: {''.join(RUS_KEYS)}
+ENG keys: {''.join(ENG_KEYS)}\n""",
+
+    "select_print_text": """Select language mode:\n\t1) RUS\n\t2) ENG\n\nInput mode: """,
 }

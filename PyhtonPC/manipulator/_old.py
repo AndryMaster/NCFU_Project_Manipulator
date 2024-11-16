@@ -40,3 +40,27 @@
 #             line = input("Command in<: ")
 #             # Check line
 #             send_msg(port, line)
+
+# def test(port: serial.Serial, debug: bool):
+#     send_msg(port, 'Hello', debug=debug)
+#
+#     t1 = time.time()
+#     msg_late_task(port, 2000, MsgOne(0, 90))
+#     msg_late_task(port, 2000, MsgAll([120, 95, 85, 60]))
+#     print(f"{time.time() - t1} seconds")
+#     msg_late_task(port, 2000, MsgAll([120, 95, 85, 60]))
+#     print(f"{time.time() - t1} seconds")
+#     msg_late_task(port, 2000, MsgAll([20, 90, 90, 90]))
+#     print(f"{time.time() - t1} seconds")
+#     msg_late_task(port, 2000, MsgOne(n_servo=0, servo_pos=90))
+#     print(f"{time.time() - t1} seconds")
+#
+#     return
+
+# def save_key():
+#     print("Saving key...")
+#     key = input("Key: ").lower()  # keyboard.read_key().strip().lower()
+#     print(key, CUR_POS)
+#     if len(key) == 1:
+#         with open('kb.txt', 'w') as f:
+#             f.write(f'{key};{" ".join(map(str, CUR_POS))}\n')

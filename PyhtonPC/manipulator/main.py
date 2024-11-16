@@ -49,26 +49,32 @@ def send_msg_late(port: serial.Serial, wait_sec: float, msg, debug=False):
 
 
 def print_cur_pos(port=None):
-    if port:
-        print(f'Current Pos: {CUR_POS}')
-    else:
-        print(f'Current Pos: {CUR_POS}')
+    print(f'Current Pos: {CUR_POS}')
+    # if port: else:
 
 
 def press_key(port: serial.Serial):
-    print("Pressing key...")
-    pos = CUR_POS[0]
-    send_msg_late(port, 0., MsgOne(0, 0))
-    send_msg_late(port, 1.6, MsgOne(0, pos))
+    # print("Pressing key...")
+    send_msg(port, MsgOne(0, 10))
+    time.sleep(1.35)
+    send_msg(port, MsgOne(0, CUR_POS[0]))
+    # send_msg_late(port, 0., MsgOne(0, 0))
+    # send_msg_late(port, 1.6, MsgOne(0, CUR_POS[0]))
 
 
-# def save_key():
-#     print("Saving key...")
-#     key = input("Key: ").lower()  # keyboard.read_key().strip().lower()
-#     print(key, CUR_POS)
-#     if len(key) == 1:
-#         with open('k.txt', 'w') as f:
-#             f.write(f'{key};{" ".join(map(str, CUR_POS))}\n')
+def move_to_key(event: keyboard.KeyboardEvent, port: serial.Serial, debug=False):
+    key = event.name.lower()
+    if key in RUS_KEYS:
+        kb_config = KB_CONFIG_RUS
+    elif key in ENG_KEYS:
+        kb_config = KB_CONFIG_ENG
+    else:
+        return
+
+    send_msg(port, MsgAll(kb_config[key]))
+
+    if debug:
+        print(f'Moving to key: {event.name}')
 
 
 def control_with_keys(event: keyboard.KeyboardEvent, port: serial.Serial, debug=False):
@@ -114,6 +120,9 @@ def mode_control(port: serial.Serial, debug: bool):
     for key in ALL_CONTROL_KEYS:
         keyboard.on_press_key(key, lambda event: control_with_keys(event, port))
 
+    # for key in RUS_KEYS:
+    #     keyboard.on_press_key(key, lambda event: move_to_key(event, port))
+
     while True:
         if keyboard.is_pressed('esc'):
             break
@@ -128,38 +137,33 @@ def mode_text_printing(port: serial.Serial, debug: bool):
         if keyboard.is_pressed('esc'):
             break
 
-        line = input("Text in<: ").lower()
-        for char in line:
-            if char in RUS_KEYS:
-                kb_config = KB_CONFIG_RUS
-            elif char in ENG_KEYS:
-                kb_config = KB_CONFIG_ENG
-            else:
-                print(f"Invalid char {char}")
+        while True:  # get lang mode
+            try:
+                mode_lang = int(input(INFO_TEXT["select_print_text"]))
+                print()
+                if mode_lang in [1, 2]:
+                    break
+            except Exception as e:
                 continue
-            send_msg(port, MsgAll(kb_config[char]))
-            time.sleep(3)
-            press_key(port)
-            time.sleep(1)
-            send_msg(port, MsgAll([90] * 4))
-            time.sleep(3)
 
+        if mode_lang == 1:
+            kb_config = KB_CONFIG_RUS
+        else:
+            kb_config = KB_CONFIG_ENG
 
-# def test(port: serial.Serial, debug: bool):
-#     send_msg(port, 'Hello', debug=debug)
-#
-#     t1 = time.time()
-#     msg_late_task(port, 2000, MsgOne(0, 90))
-#     msg_late_task(port, 2000, MsgAll([120, 95, 85, 60]))
-#     print(f"{time.time() - t1} seconds")
-#     msg_late_task(port, 2000, MsgAll([120, 95, 85, 60]))
-#     print(f"{time.time() - t1} seconds")
-#     msg_late_task(port, 2000, MsgAll([20, 90, 90, 90]))
-#     print(f"{time.time() - t1} seconds")
-#     msg_late_task(port, 2000, MsgOne(n_servo=0, servo_pos=90))
-#     print(f"{time.time() - t1} seconds")
-#
-#     return
+        line = input("Text in<: ").lower()
+        print()
+        err_chars = set(line) - set(kb_config.keys())
+        if len(err_chars) > 0:
+            print(f"Invalid chars: [ {''.join(err_chars)} ]")
+        else:
+            for char in line:
+                send_msg(port, MsgAll(kb_config[char]))  # To CHAR
+                time.sleep(3.1)
+                press_key(port)                          # Press CHAR
+                time.sleep(0.7)
+                send_msg(port, MsgAll([90] * 4))         # To START
+                time.sleep(2.5)
 
 
 def main(port: serial.Serial, debug: bool):
@@ -168,7 +172,7 @@ def main(port: serial.Serial, debug: bool):
     # Arduino init
     print("Please wait...\n")
     send_msg(port, "Try start")
-    time.sleep(4)
+    time.sleep(3)
     send_msg(port, "Try start")
     time.sleep(0.5)
     get_msg_all(port)
