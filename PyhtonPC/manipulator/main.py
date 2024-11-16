@@ -4,7 +4,6 @@ import keyboard
 
 from key_board import *
 from config import *
-from utils import *
 from msg import *
 
 
@@ -50,11 +49,9 @@ def send_msg_late(port: serial.Serial, wait_sec: float, msg, debug=False):
 
 def print_cur_pos(port=None):
     print(f'Current Pos: {CUR_POS}')
-    # if port: else:
 
 
 def press_key(port: serial.Serial):
-    # print("Pressing key...")
     send_msg(port, MsgOne(0, 10))
     time.sleep(1.35)
     send_msg(port, MsgOne(0, CUR_POS[0]))
@@ -97,6 +94,14 @@ def control_with_keys(event: keyboard.KeyboardEvent, port: serial.Serial, debug=
         print(f'Key: {event.name} pressed ({add_val} deg)')
 
 
+def clip(n: int, start=0, end=180):
+    if n <= start:
+        return start
+    elif n >= end:
+        return end
+    return n
+
+
 def mode_cli(port: serial.Serial, debug: bool):
     print(INFO_TEXT["mode_cli"])
 
@@ -116,13 +121,11 @@ def mode_control(port: serial.Serial, debug: bool):
 
     keyboard.on_press_key('enter', lambda event: print_cur_pos(port))
     keyboard.on_press_key('p', lambda event: press_key(port))
-    # keyboard.on_press_key('+', lambda event: save_key())
     for key in ALL_CONTROL_KEYS:
         keyboard.on_press_key(key, lambda event: control_with_keys(event, port))
 
     # for key in RUS_KEYS:
     #     keyboard.on_press_key(key, lambda event: move_to_key(event, port))
-
     while True:
         if keyboard.is_pressed('esc'):
             break
@@ -152,6 +155,7 @@ def mode_text_printing(port: serial.Serial, debug: bool):
             kb_config = KB_CONFIG_ENG
 
         line = input("Text in<: ").lower()
+        # line = RUS_KEYS
         print()
         err_chars = set(line) - set(kb_config.keys())
         if len(err_chars) > 0:
@@ -162,8 +166,9 @@ def mode_text_printing(port: serial.Serial, debug: bool):
                 time.sleep(3.1)
                 press_key(port)                          # Press CHAR
                 time.sleep(0.7)
-                send_msg(port, MsgAll([90] * 4))         # To START
-                time.sleep(2.5)
+                if RESET_AFTER_PRESS:
+                    send_msg(port, MsgAll([90] * 4))         # To START
+                    time.sleep(2.5)
 
 
 def main(port: serial.Serial, debug: bool):
@@ -191,7 +196,6 @@ def main(port: serial.Serial, debug: bool):
         elif mode == 3:
             mode_text_printing(port, debug)
         else:
-            # test(port, debug)
             continue
         break
 

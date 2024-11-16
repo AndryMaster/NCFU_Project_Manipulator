@@ -1,5 +1,3 @@
-from key_board import RUS_KEYS, ENG_KEYS
-
 DEBUG = False
 
 # Arduino
@@ -8,6 +6,13 @@ NUM_SERVOS = 4
 # Serial
 PORT = 'COM5'
 SERIAL_SPEED = 9600  # 115200 9600
+
+# KeyBoard Config
+CONFIG_PATH = 'config/kb_config_rus-1.json'
+CONFIG_LANG = 'RUS'
+
+# Text Print
+RESET_AFTER_PRESS = True
 
 # Control
 SEND_DELAY = 0.07
@@ -44,8 +49,8 @@ Modifiers (speed in degrees): {' '.join([f'<{key}>={MULTY_ADD_POS[key][0]}' for 
 
     "mode_print_text": f"""ModeINFO:
 Print your text in selected language (in lower case). It will be auto printed.
-RUS keys: {''.join(RUS_KEYS)}
-ENG keys: {''.join(ENG_KEYS)}\n""",
+RUS keys: {"ё1234567890йцукенгшщзхъфывапролджэячсмитьбю. "}
+ENG keys: {"`1234567890qwertyuiop[]asdfghjkl;'zxcvbnm,./ "}\n""",
 
     "select_print_text": """Select language mode:\n\t1) RUS\n\t2) ENG\n\nInput mode: """,
 }

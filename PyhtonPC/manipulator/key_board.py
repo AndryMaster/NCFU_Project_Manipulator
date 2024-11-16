@@ -1,3 +1,8 @@
+import json
+
+from config import CONFIG_PATH, CONFIG_LANG
+
+
 RUS_KEYBOARD = [
     "ё1234567890"
     "йцукенгшщзхъ",
@@ -67,51 +72,20 @@ KB_CONFIG_RUS = {
     '.': [91, 91, 141, 117],
     ' ': [90, 145, 162, 82]
 }
+KB_CONFIG_ENG = dict()
 
-KB_CONFIG_ENG = {
-    '`': [90, 90, 90, 90],
-    '1': [90, 90, 90, 90],
-    '2': [90, 90, 90, 90],
-    '3': [90, 90, 90, 90],
-    '4': [90, 90, 90, 90],
-    '5': [90, 90, 90, 90],
-    '6': [90, 90, 90, 90],
-    '7': [90, 90, 90, 90],
-    '8': [90, 90, 90, 90],
-    '9': [90, 90, 90, 90],
-    '0': [90, 90, 90, 90],
-    'q': [90, 90, 90, 90],
-    'w': [90, 90, 90, 90],
-    'e': [90, 90, 90, 90],
-    'r': [90, 90, 90, 90],
-    't': [90, 90, 90, 90],
-    'y': [90, 90, 90, 90],
-    'u': [90, 90, 90, 90],
-    'i': [90, 90, 90, 90],
-    'o': [90, 90, 90, 90],
-    'p': [90, 90, 90, 90],
-    '[': [90, 90, 90, 90],
-    ']': [90, 90, 90, 90],
-    'a': [90, 90, 90, 90],
-    's': [90, 90, 90, 90],
-    'd': [90, 90, 90, 90],
-    'f': [90, 90, 90, 90],
-    'g': [90, 90, 90, 90],
-    'h': [90, 90, 90, 90],
-    'j': [90, 90, 90, 90],
-    'k': [90, 90, 90, 90],
-    'l': [90, 90, 90, 90],
-    ';': [90, 90, 90, 90],
-    "'": [90, 90, 90, 90],
-    'z': [90, 90, 90, 90],
-    'x': [90, 90, 90, 90],
-    'c': [90, 90, 90, 90],
-    'v': [90, 90, 90, 90],
-    'b': [90, 90, 90, 90],
-    'n': [90, 90, 90, 90],
-    'm': [90, 90, 90, 90],
-    ',': [90, 90, 90, 90],
-    '.': [90, 90, 90, 90],
-    '/': [90, 90, 90, 90],
-    ' ': [90, 90, 90, 90]
-}
+if CONFIG_PATH:
+    if CONFIG_LANG == 'RUS':
+        KB_CONFIG_RUS = json.load(open(CONFIG_PATH, 'r', encoding='utf-8'))
+        KB_CONFIG_ENG = {_RUS_to_ENG[key]: val for key, val in KB_CONFIG_RUS.items()}
+    else:
+        KB_CONFIG_ENG = json.load(open(CONFIG_PATH, 'r', encoding='utf-8'))
+        KB_CONFIG_RUS = {_ENG_to_RUS[key]: val for key, val in KB_CONFIG_ENG.items()}
+
+
+if __name__ == "__main__":
+    print(''.join(RUS_KEYS))
+    print(''.join(ENG_KEYS))
+
+    with open('config/kb_config_eng-1.json', 'w', encoding='utf-8') as file:
+        json.dump(KB_CONFIG_ENG, file, ensure_ascii=False, indent=4)
