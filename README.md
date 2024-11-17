@@ -16,4 +16,5 @@ USB type-B кабелю к плате). Также содержит некото
 
 
 Напоминалка:
-не забыть обновить файлы в папке "ArduinoUNO"
+* не забыть обновить файлы в папке "ArduinoUNO"
+* драйвер [CH341](https://wch-ic.com/downloads/CH341SER_EXE.html) (Arduino Serial)

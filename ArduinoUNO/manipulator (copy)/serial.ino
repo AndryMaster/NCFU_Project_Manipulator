@@ -9,9 +9,9 @@ bool testStart() {
       isStart = true;
       Serial.readString();
 
-      // log("Prog started");
+      // log_dbg("Prog started");
       lateSetup();
-      // log("Late setup");
+      // log_dbg("Late setup");
     }
   }
   return isStart;

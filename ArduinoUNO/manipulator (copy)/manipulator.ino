@@ -9,7 +9,7 @@
 
 
 // Task variables
-TimerTask timers[TASK_SIZE];
+// TimerTask timers[TASK_SIZE];
 
 
 // Servo global variables
@@ -32,27 +32,24 @@ enum MsgType {
 };
 
 
+
 // Main .ino prog
 void setup() {
   serialSetup();  // setup <serial.ino>
-  log("Setup main program");
+  log_dbg("Setup main program");
 
 }
 
 void lateSetup() {
   servoSetup();  // setup <servo.ino>
-  log("Late(servo) setup");
-
-  // addTimerTask(timers, 0, 160, millis() + 5000);
-  // // addTimerTask(timers, 3, 110, millis() + 8000);
-  // addTimerTask(timers, 0, 20, millis() + 10000);
-  // // addTimerTask(timers, 3, 90, millis() + 15000);
+  log_dbg("Late(servo) setup");
+  log("READY");
 }
 
 void loop() {
   if (!testStart()) return;  // Start after print anything
   servoTickAll();
-  checkTimerTasks(timers, servos, millis());
+  // checkTimerTasks(timers, servos, millis());
 
   if (Serial.available() > 0) {
     MsgType cmd = Serial.read();
@@ -60,7 +57,7 @@ void loop() {
 
     switch (cmd) {
       case MsgType::One:
-        log("case ONE");
+        log_dbg("case ONE");
 
         n = Serial.parseInt();
         p1 = Serial.parseInt();
@@ -70,7 +67,7 @@ void loop() {
         break;
 
       case MsgType::All:
-        log("case All");
+        log_dbg("case All");
 
         for (byte i = 0; i < NUM_SERVO; i++) {
           p1 = Serial.parseInt();
@@ -81,24 +78,24 @@ void loop() {
         break;
       
       case MsgType::KeyPress:
-        log("case KeyPress");
+        log_dbg("case KeyPress");
         break;
 
       case MsgType::Text:
-        log("case Text");
+        log_dbg("case Text");
         break;
       
-      case MsgType::GetPos:  // Fast responce
+      case MsgType::GetPos:
         for (byte i = 0; i < NUM_SERVO; i++) {
           logch(servos[i].getCurrentDeg());
-          logch(" ");
+          logch(" ");  // Fast responce
         } log(" ");
 
-        log("case GetPos");
+        log_dbg("case GetPos");
         break;
 
       default:
-        log("other message");
+        log_dbg("other message");
     }
 
     Serial.readString();

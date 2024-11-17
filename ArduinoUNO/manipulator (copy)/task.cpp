@@ -6,7 +6,7 @@ struct TimerTask {
   uint32_t startTimer;
   uint8_t nServo;
   uint8_t posServo;
-};  //
+};
 
 
 #ifdef DEBUG
